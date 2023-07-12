@@ -1,27 +1,23 @@
 "use client";
 
+import { MyContext } from "@/context/MyContext";
+import ITask from "@/type";
 import React, {
   ChangeEvent,
   FormEvent,
   useContext,
+  useEffect,
   useRef,
   useState,
 } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { MyContext } from "../context/MyContext";
 import { RxCross1 } from "react-icons/rx";
-import { AiOutlineUserAdd } from "react-icons/ai";
 
-const Form = () => {
-
-  // ref is used to use the in-built dialog box feature of HTML.
-  const ref = useRef<HTMLDialogElement | null>(null);
-
-  // use the context api for the dataflow for small applications like this.
-  const { task, setTask } = useContext(MyContext);
+const TaskUpdate = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { task, setTask, isEdit, setIsEdit, editData } = useContext(MyContext);
 
   const [formData, setFormData] = useState({
-    id: uuidv4(),
+    id: "",
     title: "",
     description: "",
     status: "",
@@ -29,58 +25,65 @@ const Form = () => {
 
   const [errMsg, setErrMsg] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    setFormData(editData);
+  }, [editData]);
 
-    // This logic prevents the empty data submission and give error for it.
-    if (!formData.description || !formData.title || !formData.status) {
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!ref?.current?.contains(e.target as Node)) {
+        setIsEdit(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  });
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!formData.description || !formData.status || !formData.title) {
       setErrMsg("* All Fields are mandatory");
     } else {
-      // console.log(formData);
       setErrMsg("");
-      setFormData({
-        id: "",
-        title: "",
-        description: "",
-        status: "",
-      });
-      setTask([...task, formData]);
+      setIsEdit(false);
+      let findUserIndex = task.findIndex(
+        (item: ITask) => item.id === editData.id
+      );
+      let newTask = [...task];
+      newTask.splice(findUserIndex, 1, formData);
+      setTask(newTask);
     }
-  };
-
-  const handleDialogBox = () => {
-    ref?.current?.showModal();
-  };
-
-  const dialogClose = () => {
-    ref?.current?.close();
   };
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     setErrMsg("");
-    setFormData({ ...formData, id: uuidv4(), [e.target.name]: e.target.value });
-  };
 
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
   return (
     <>
-      <button
-        onClick={handleDialogBox}
-        className=" py-2 flex gap-4 items-center w-1/4 mx-auto justify-center mt-10 font-bold text-xl hover:text-gray-800 hover:scale-105 transition-all duration-300 ease-in-out shadow-md"
+      <div
+        ref={ref}
+        className={`p-0 w-full h-screen pt-24 top-0 bg-black/20 ${
+          isEdit ? "" : "hidden"
+        } absolute z-40`}
       >
-        <AiOutlineUserAdd /> Create New Task
-      </button>
-      <dialog ref={ref} id="modal" className="p-0 w-full bg-transparent ">
         <form onSubmit={handleSubmit} className="w-2/5 mx-auto shadow-xl ">
           <fieldset className="flex flex-col gap-5 items-center bg-slate-200 rounded-md py-10 relative">
             <RxCross1
-              onClick={dialogClose}
-              className="absolute top-3 right-3 cursor-pointer text-xl hover:text-2xl"
+              onClick={() => setIsEdit(false)}
+              className="text-red-800 absolute top-3 right-3 cursor-pointer text-xl hover:text-2xl"
             />
             <h1 className="text-teal-600 font-bold mt-0 text-4xl pb-4 text-center">
               Task Form
             </h1>
+
             <input
               type="text"
               name="title"
@@ -109,14 +112,14 @@ const Form = () => {
               onChange={handleChange}
               className="focus:outline-none p-3 bg-slate-800 text-slate-50 rounded-sm"
               cols={23}
-              rows={5}
+              rows={3}
             ></textarea>
             <div className="flex justify-evenly w-1/2 px-3">
               <button
                 className="py-2 px-4 font-bold text-sm bg-teal-800 text-white rounded-sm  my-2 hover:bg-teal-900"
                 type="submit"
               >
-                Submit
+                Update
               </button>
               <button
                 className="py-2 px-4 font-bold text-sm bg-teal-800 text-white rounded-sm  my-2 hover:bg-teal-900"
@@ -132,8 +135,6 @@ const Form = () => {
               >
                 Reset
               </button>
-
-              {/* Error message will show here when it be */}
             </div>
             {errMsg ? (
               <div className="text-red-900 font-bold">{errMsg}</div>
@@ -142,9 +143,9 @@ const Form = () => {
             )}
           </fieldset>
         </form>
-      </dialog>
+      </div>
     </>
   );
 };
 
-export default Form;
+export default TaskUpdate;

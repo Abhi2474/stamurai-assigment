@@ -8,12 +8,12 @@ const fetchTasks = async () => {
 };
 
 export default async function App() {
-  const dataset:ITask[] = await fetchTasks();
+  const fetchTaskData: ITask[] = await fetchTasks();
   // console.log(dataset);
 
   return (
     <>
-      <Home database={dataset}></Home>
+      <Home database={fetchTaskData}></Home>
     </>
   );
 }

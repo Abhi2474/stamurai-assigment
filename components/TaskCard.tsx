@@ -1,15 +1,18 @@
 "use client";
 
-import  ITask  from "@/type";
-import React, { useState } from "react";
+import ITask from "@/type";
+import React, { useContext, useState } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { AiFillEdit } from "react-icons/ai";
+import { MyContext } from "@/context/MyContext";
 
 const TaskCard = ({ item }: { item: ITask }) => {
   const [isHover, setIsHover] = useState(false);
+  const { task, setTask, setIsEdit, setEditData } = useContext(MyContext);
 
   let textColorClass;
-
+  
+  // These logic is for the different color for the different task status
   if (item.status === "Completed") {
     textColorClass = "bg-green-600";
   } else if (item.status === "To Do") {
@@ -19,6 +22,19 @@ const TaskCard = ({ item }: { item: ITask }) => {
   } else {
     textColorClass = "bg-gray-600";
   }
+
+  const handleEditTask = (dt: ITask) => {
+    setIsEdit(true);
+    setEditData(dt);
+    // console.log(dt);
+  };
+
+  const handleDelete = (id: string) => {
+    const filteredData = task.filter((item: ITask) => {
+      return item.id !== id;
+    });
+    setTask(filteredData);
+  };
 
   return (
     <>
@@ -45,15 +61,17 @@ const TaskCard = ({ item }: { item: ITask }) => {
         <div
           className={`${
             isHover ? "" : "opacity-0"
-          } flex flex-col justify-center`}
+          } text-slate-200 flex flex-col justify-center`}
         >
           <AiFillEdit
             title="Edit"
-            className="cursor-pointer hover:scale-150 hover:text-green-700 my-3 duration-300 ease-in-out"
+            className="cursor-pointer hover:scale-150 hover:text-green-500 my-3 duration-300 ease-in-out"
+            onClick={() => handleEditTask(item)}
           />
           <RiDeleteBin5Line
             title="Delete"
-            className="cursor-pointer hover:scale-150 hover:text-red-700 my-3 duration-300 ease-in-out"
+            className="cursor-pointer hover:scale-150 hover:text-red-500 my-3 duration-300 ease-in-out"
+            onClick={() => handleDelete(item.id)}
           />
         </div>
       </div>

@@ -1,4 +1,3 @@
 import { createContext } from "react";
 
-export const MyContext = createContext<any|any[]>(null);
-  
+export const MyContext = createContext<any | any[]>(null);

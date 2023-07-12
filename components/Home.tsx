@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import TaskDisplay from "@/components/TaskDisplay";
 import TaskUpdate from "./TaskUpdate";
 import tasks from '@/public/tasks.json'
+import { GoGoal } from 'react-icons/go'
 
 
 export default function Home() {
@@ -32,8 +33,8 @@ export default function Home() {
         value={{ task, setTask, editData, setEditData, isEdit, setIsEdit }}
       >
         <header>
-          <h1 className="lg:text-4xl sm:text-2xl text-center my-4 font-bold text-cyan-700">
-            Assignment STAMURAI 📃
+          <h1 className="lg:text-4xl sm:text-2xl text-center my-4 font-bold text-cyan-700 flex justify-center gap-4">
+            Task Mangament System <GoGoal className="text-red-500"/>
           </h1>
         </header>
         <Form />

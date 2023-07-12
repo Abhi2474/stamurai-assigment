@@ -5,11 +5,12 @@ import Form from "@/components/Form";
 import { MyContext } from "@/context/MyContext";
 import React, { useEffect, useState } from "react";
 import TaskDisplay from "@/components/TaskDisplay";
-import ITask from "@/type";
 import TaskUpdate from "./TaskUpdate";
+import tasks from '@/public/tasks.json'
 
-export default function Home({ database }: { database: ITask[] }) {
-  const [task, setTask] = useState(database);
+
+export default function Home() {
+  const [task, setTask] = useState(tasks);
   const [isEdit, setIsEdit] = useState(false);
   const [editData, setEditData] = useState({});
 

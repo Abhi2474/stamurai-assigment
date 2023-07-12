@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Task Mangement System
+
+This is a task management system app to create task, upadate a task and also can delete the task as per requirement. So, Basically it is a CRUD operation app in which anyone can see, create, update and delete.
 
 ## Getting Started
 
